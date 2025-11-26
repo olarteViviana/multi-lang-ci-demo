@@ -1,0 +1,81 @@
+version: 2.1
+
+jobs:
+  python-tests:
+    docker:
+      - image: cimg/python:3.11
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Instalar dependencias Python
+          command: |
+            cd python_app
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+      - run:
+          name: Ejecutar tests Python
+          command: |
+            cd python_app
+            pytest
+
+  node-tests:
+    docker:
+      - image: cimg/node:20.0
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Instalar dependencias Node
+          command: |
+            cd node_app
+            npm install
+      - run:
+          name: Ejecutar tests Node
+          command: |
+            cd node_app
+            npm test
+
+  java-tests:
+    docker:
+      - image: cimg/openjdk:21.0
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Compilar Java
+          command: |
+            cd java_app
+            mkdir -p out
+            javac -d out $(find src -name "*.java")
+      - run:
+          name: Ejecutar tests Java
+          command: |
+            cd java_app
+            java -cp out com.example.AppTest
+
+  dotnet-tests:
+    docker:
+      - image: cimg/dotnet:8.0
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Restaurar y compilar .NET
+          command: |
+            cd dotnet_app
+            dotnet build
+      - run:
+          name: Ejecutar "tests" .NET
+          command: |
+            cd dotnet_app
+            dotnet run
+
+workflows:
+  version: 2
+  multi-lang-workflow:
+    jobs:
+      - python-tests
+      - node-tests
+      - java-tests
+      - dotnet-tests
