@@ -1,0 +1,59 @@
+name: Multi-lang CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Python tests
+        run: |
+          cd python_app
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          python -m pytest
+
+  node-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run Node tests
+        run: |
+          cd node_app
+          npm install
+          npm test
+
+  java-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Java tests
+        run: |
+          cd java_app
+          mkdir -p out
+          javac -d out src/main/java/com/example/App.java src/test/java/com/example/AppTest.java
+          java -cp out com.example.AppTest
+
+  dotnet-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Run .NET tests
+        run: |
+          cd dotnet_app
+          dotnet build
+          dotnet run
