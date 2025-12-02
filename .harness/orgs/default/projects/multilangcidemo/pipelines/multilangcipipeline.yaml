@@ -1,0 +1,79 @@
+pipeline:
+  name: multi-lang-ci-pipeline
+  identifier: multilangcipipeline
+  projectIdentifier: multilangcidemo
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: OlarteVivi
+        build: <+input>
+  stages:
+    - stage:
+        name: Stage-multi-lang
+        identifier: Stagemultilang
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: true
+          buildIntelligence:
+            enabled: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Docker
+            spec:
+              harnessImageConnectorRef: account.harnessImage
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: python-tests
+                  identifier: pythontests
+                  spec:
+                    shell: Bash
+                    command: |-
+                      cd python_app
+                      python -m pip install --upgrade pip
+                      pip install -r requirements.txt
+                      python -m pytest
+                  description: cimg/python:3.11
+              - step:
+                  type: Run
+                  name: node-tests
+                  identifier: nodetests
+                  spec:
+                    shell: Bash
+                    command: |-
+                      cd node_app
+                      npm install
+                      npm test
+                  description: cimg/node:20.16
+              - step:
+                  type: Run
+                  name: java-tests
+                  identifier: javatests
+                  spec:
+                    shell: Bash
+                    command: |-
+                      cd java_app
+                      mkdir -p out
+                      javac -d out src/main/java/com/example/App.java src/test/java/com/example/AppTest.java
+                      java -cp out com.example.AppTest
+                  description: cimg/openjdk:21.0
+              - step:
+                  type: Run
+                  name: dotnet-tests
+                  identifier: dotnettests
+                  spec:
+                    shell: Bash
+                    command: |-
+                      cd dotnet_app
+                      dotnet build
+                      dotnet run
+                  description: mcr.microsoft.com/dotnet/sdk:8.0
