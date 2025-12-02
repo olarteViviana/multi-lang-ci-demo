@@ -77,3 +77,5 @@ pipeline:
                       dotnet build
                       dotnet run
                   description: mcr.microsoft.com/dotnet/sdk:8.0
+        delegateSelectors:
+          - docker-delegate
