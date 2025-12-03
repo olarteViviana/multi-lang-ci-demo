@@ -82,7 +82,7 @@ pipeline:
             type: KubernetesDirect
             spec:
               connectorRef: kubernetscluster
-              namespace: kubernetes-delegate
+              namespace: harness-delegate-ng
               automountServiceAccountToken: true
               nodeSelector: {}
               harnessImageConnectorRef: account.harnessImage
