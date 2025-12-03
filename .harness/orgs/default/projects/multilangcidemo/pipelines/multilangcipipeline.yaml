@@ -22,13 +22,6 @@ pipeline:
             override: true
           buildIntelligence:
             enabled: true
-          platform:
-            os: Linux
-            arch: Amd64
-          runtime:
-            type: Docker
-            spec:
-              harnessImageConnectorRef: account.harnessImage
           execution:
             steps:
               - step:
@@ -36,6 +29,8 @@ pipeline:
                   name: python-tests
                   identifier: pythontests
                   spec:
+                    connectorRef: account.harnessImage
+                    image: cimg/python:3.11
                     shell: Bash
                     command: |-
                       cd python_app
@@ -48,6 +43,8 @@ pipeline:
                   name: node-tests
                   identifier: nodetests
                   spec:
+                    connectorRef: account.harnessImage
+                    image: cimg/node:20.16
                     shell: Bash
                     command: |-
                       cd node_app
@@ -59,6 +56,8 @@ pipeline:
                   name: java-tests
                   identifier: javatests
                   spec:
+                    connectorRef: account.harnessImage
+                    image: cimg/openjdk:21.0
                     shell: Bash
                     command: |-
                       cd java_app
@@ -71,11 +70,22 @@ pipeline:
                   name: dotnet-tests
                   identifier: dotnettests
                   spec:
+                    connectorRef: account.harnessImage
+                    image: mcr.microsoft.com/dotnet/sdk:8.0
                     shell: Bash
                     command: |-
                       cd dotnet_app
                       dotnet build
                       dotnet run
                   description: mcr.microsoft.com/dotnet/sdk:8.0
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: kubernetscluster
+              namespace: kubernetes-delegate
+              automountServiceAccountToken: true
+              nodeSelector: {}
+              harnessImageConnectorRef: account.harnessImage
+              os: Linux
         delegateSelectors:
-          - docker-delegate
+          - kubernetes-delegate
