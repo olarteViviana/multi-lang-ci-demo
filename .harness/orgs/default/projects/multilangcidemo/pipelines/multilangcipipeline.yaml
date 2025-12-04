@@ -30,41 +30,41 @@ pipeline:
                   identifier: pythontests
                   spec:
                     connectorRef: account.harnessImage
-                    image: cimg/python:3.11
+                    image: python:3.11
                     shell: Bash
                     command: |-
                       cd python_app
                       python -m pip install --upgrade pip
                       pip install -r requirements.txt
                       python -m pytest
-                  description: cimg/python:3.11
+                  description: python:3.11
               - step:
                   type: Run
                   name: node-tests
                   identifier: nodetests
                   spec:
                     connectorRef: account.harnessImage
-                    image: cimg/node:20.16
+                    image: node:20
                     shell: Bash
                     command: |-
                       cd node_app
                       npm install
                       npm test
-                  description: cimg/node:20.16
+                  description: node:20
               - step:
                   type: Run
                   name: java-tests
                   identifier: javatests
                   spec:
                     connectorRef: account.harnessImage
-                    image: cimg/openjdk:21.0
+                    image: openjdk:21-slim
                     shell: Bash
                     command: |-
                       cd java_app
                       mkdir -p out
                       javac -d out src/main/java/com/example/App.java src/test/java/com/example/AppTest.java
                       java -cp out com.example.AppTest
-                  description: cimg/openjdk:21.0
+                  description: openjdk:21-slim
               - step:
                   type: Run
                   name: dotnet-tests
