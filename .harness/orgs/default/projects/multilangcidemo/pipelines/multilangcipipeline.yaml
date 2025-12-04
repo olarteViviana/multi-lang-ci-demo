@@ -89,6 +89,3 @@ pipeline:
               os: Linux
         delegateSelectors:
           - kubernetes-delegate
-        runMode:
-          type: Manual
-          timeout: 30m
